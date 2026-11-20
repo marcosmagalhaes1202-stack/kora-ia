@@ -1,0 +1,130 @@
+{
+  "chave": "salario-maternidade",
+  "nome": "Salário-maternidade",
+  "area": "previdenciario",
+  "versao": 1,
+  "arquivos": {
+    "roteiro_md": "roteiro.md",
+    "base_conhecimento_md": "base-conhecimento.md"
+  },
+  "gatilhos": [
+    "salario maternidade",
+    "salario-maternidade",
+    "auxilio maternidade",
+    "licenca maternidade",
+    "beneficio da gestante",
+    "estou gravida",
+    "tive bebe"
+  ],
+  "variaveis": [
+    "agente", "escritorio", "advogado", "oab", "instagram", "percentual",
+    "responsavel_2o_atendimento"
+  ],
+  "variaveis_calculadas": [
+    "nome", "valor_mensal", "valor_total", "valor_escritorio", "valor_cliente",
+    "link_contrato", "dpp", "doc_pendente"
+  ],
+  "etapas_audio": ["E1", "E4-A", "E4-B", "E6", "E8"],
+  "ferramentas": [
+    "salvar_campos", "avancar_roteiro", "mover_etapa", "aplicar_etiqueta", "remover_etiqueta",
+    "registrar_documento", "calcular_estimativa", "consultar_horarios", "agendar_reuniao",
+    "gerar_contrato", "transferir_humano", "marcar_sem_direito", "agendar_retorno",
+    "parar_contato", "responder"
+  ],
+  "valor_previsto_padrao": 1945.20,
+  "regra_honorarios_padrao": {
+    "base": "beneficio_total",
+    "percentual": 30,
+    "parcelas_futuras_qtd": 0,
+    "informar_ao_cliente": true
+  },
+  "etiquetas_auto": [
+    "salario-maternidade", "gestante-contribuir", "graca", "rural", "MEI", "2o-beneficio",
+    "negado-INSS", "urgente-prazo", "sem-direito", "pediu-audio", "mandou-audio", "docs-pendentes"
+  ],
+  "campos_schema": {
+    "type": "object",
+    "properties": {
+      "nome": { "type": "string", "description": "Como a cliente quer ser chamada" },
+      "situacao": { "enum": ["gravida", "nasceu", "adocao", "perda"] },
+      "dpp": { "type": "string", "format": "date", "description": "Data provável do parto" },
+      "data_nascimento_bebe": { "type": "string", "format": "date" },
+      "categoria": { "enum": ["clt", "mei", "autonoma", "domestica", "rural", "desempregada", "sem_atividade", "facultativa"] },
+      "contribuiu": { "type": "boolean" },
+      "ultima_contribuicao": { "type": "string", "description": "Mês/ano aproximado (AAAA-MM)" },
+      "das_em_dia": { "type": "boolean" },
+      "saida_emprego": { "type": "string", "description": "Mês/ano em que saiu do último emprego (AAAA-MM)" },
+      "seguro_desemprego": { "type": "boolean" },
+      "ja_pediu_inss": { "type": "boolean" },
+      "resultado_inss": { "enum": ["em_analise", "negado", "concedido", "exigencia"] },
+      "motivo_negativa": { "type": "string" },
+      "segunda_atividade": { "type": "boolean", "description": "Tem MEI ou trabalho por conta própria além da carteira" },
+      "cadunico_atualizado": { "type": "boolean" },
+      "rural_atividade": { "type": "string" },
+      "rural_terra": { "enum": ["propria", "familia", "terceiros", "assentamento", "outro"] },
+      "nome_completo": { "type": "string" },
+      "cpf": { "type": "string", "pattern": "^\\d{11}$" },
+      "rg": { "type": "string" },
+      "data_nascimento": { "type": "string", "format": "date" },
+      "endereco": { "type": "string" },
+      "cep": { "type": "string" },
+      "estado_civil": { "enum": ["solteira", "casada", "uniao_estavel", "divorciada", "viuva"] },
+      "profissao": { "type": "string" },
+      "nome_crianca": { "type": "string" },
+      "quer_chamada_video": { "type": "boolean" }
+    }
+  },
+  "campos_obrigatorios_contrato": ["nome_completo", "cpf", "rg", "endereco", "estado_civil", "profissao"],
+  "documentos": {
+    "todas": [
+      { "tipo": "rg_cnh", "nome": "RG ou CNH (frente e verso)", "obrigatorio": true },
+      { "tipo": "comprovante_endereco", "nome": "Comprovante de endereço recente", "obrigatorio": true },
+      { "tipo": "certidao_nascimento", "nome": "Certidão de nascimento do bebê", "obrigatorio": false, "quando": "situacao = nasceu" }
+    ],
+    "por_categoria": {
+      "mei": [{ "tipo": "das", "nome": "DAS pagos / CCMEI", "obrigatorio": false }, { "tipo": "cnis", "nome": "Extrato CNIS", "obrigatorio": false }],
+      "autonoma": [{ "tipo": "gps", "nome": "Guias pagas", "obrigatorio": false }, { "tipo": "cnis", "nome": "Extrato CNIS", "obrigatorio": false }],
+      "facultativa": [{ "tipo": "gps", "nome": "Guias pagas", "obrigatorio": false }],
+      "desempregada": [{ "tipo": "rescisao", "nome": "Rescisão / CTPS com baixa", "obrigatorio": false }, { "tipo": "seguro_desemprego", "nome": "Comprovante do seguro-desemprego", "obrigatorio": false }],
+      "rural": [{ "tipo": "prova_rural", "nome": "Documentos de trabalho rural", "obrigatorio": false }],
+      "clt": [{ "tipo": "ctps", "nome": "Carteira de trabalho (digital)", "obrigatorio": false }]
+    }
+  },
+  "followups_padrao": [
+    {
+      "nome": "Sem resposta",
+      "gatilho": "sem_resposta",
+      "passos": [
+        { "atraso": "2 hours", "tipo": "texto_fixo", "conteudo": "Oi, {{nome}}! Ficou alguma dúvida? Tô aqui pra te ajudar 😊" },
+        { "atraso": "22 hours", "tipo": "texto_fixo", "conteudo": "Passando pra saber se posso continuar te ajudando com o salário-maternidade 💛" },
+        { "atraso": "2 days", "tipo": "texto_fixo", "conteudo": "Vou deixar seu atendimento em espera. Quando quiser, é só me chamar!" }
+      ]
+    },
+    {
+      "nome": "Contrato pendente",
+      "gatilho": "contrato_pendente",
+      "passos": [
+        { "atraso": "2 hours", "tipo": "texto_fixo", "conteudo": "Oi, {{nome}}, tudo bem? Vi que o contrato ainda está pendente. Quer que eu te ajude a assinar agora? Leva 2 minutinhos 😊" },
+        { "atraso": "22 hours", "tipo": "texto_fixo", "conteudo": "Ficou alguma dúvida no contrato? Posso te explicar qualquer parte." },
+        { "atraso": "1 day", "tipo": "texto_fixo", "conteudo": "Uma informação que pode te ajudar: hoje o INSS tem 30 dias pra analisar o salário-maternidade. Quanto antes a gente começar, antes o dinheiro chega 💛" }
+      ]
+    },
+    {
+      "nome": "Gestante que precisa contribuir",
+      "gatilho": "data_relativa",
+      "config_gatilho": { "campo": "dpp", "deslocamento": "-15 days", "condicao": "etiqueta gestante-contribuir e card sem contrato assinado" },
+      "passos": [
+        { "atraso": "0 seconds", "tipo": "texto_fixo", "conteudo": "Oi, {{nome}}! Sua data do parto tá chegando. Pra garantir o salário-maternidade, a contribuição precisa ser paga antes do bebê nascer. Me avisa aqui que eu te ajudo, ainda dá tempo! 💙" }
+      ]
+    },
+    {
+      "nome": "Documentos pendentes",
+      "gatilho": "documentos_pendentes",
+      "passos": [
+        { "atraso": "1 day", "tipo": "texto_fixo", "conteudo": "Oi, {{nome}}! Só falta {{doc_pendente}} pra gente dar entrada. Consegue me mandar hoje?" },
+        { "atraso": "1 day", "tipo": "ia_gerada", "conteudo": "Lembre com gentileza qual documento falta e ofereça ajuda para tirar a foto." },
+        { "atraso": "3 days", "tipo": "texto_fixo", "conteudo": "{{nome}}, quando conseguir o {{doc_pendente}}, me manda aqui que eu sigo com o seu pedido 💛" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+# dependências e builds
+node_modules/
+.pnpm-store/
+.next/
+dist/
+build/
+out/
+.turbo/
+coverage/
+
+# ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# supabase local
+supabase/.branches/
+supabase/.temp/
+
+# sistema e editores
+.DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# claude code (configuração local)
+.claude/settings.local.json
